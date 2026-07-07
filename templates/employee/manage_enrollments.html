@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Enrollments - LMS{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-person-plus-fill"></i> Create New Enrollment</h4>
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">Select a student and a course to manually create an enrollment record.</p>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-person-check-fill"></i> Enroll Student
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-card-checklist"></i> Current Enrollments</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Instructor</th>
+                                <th>Enrolled On</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for enrollment in enrollments %}
+                            <tr>
+                                <td><strong>{{ enrollment.student.get_full_name|default:enrollment.student.username }}</strong></td>
+                                <td>{{ enrollment.course.title }}</td>
+                                <td>{{ enrollment.course.instructor.get_full_name|default:"N/A" }}</td>
+                                <td>{{ enrollment.enrolled_on|date:"M d, Y" }}</td>
+                                <td class="text-center">
+                                    <form method="POST" action="{% url 'remove_enrollment' enrollment.id %}" onsubmit="return confirm('Are you sure you want to remove this enrollment? This will un-enroll the student from the course.');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Remove Enrollment">
+                                            <i class="bi bi-person-dash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center p-5 text-muted">
+                                    <i class="bi bi-clipboard-x fs-1"></i>
+                                    <p class="mt-2 mb-0">No students are currently enrolled in any courses.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                Displaying {{ enrollments.count }} enrollment record(s).
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    form p {
+        margin-bottom: 1rem;
+    }
+    form p label {
+        display: block;
+        margin-bottom: .5rem;
+        font-weight: 500;
+    }
+    form p select {
+        width: 100%;
+        padding: .5rem .75rem;
+        font-size: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: .375rem;
+    }
+</style>
+{% endblock %}

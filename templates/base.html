@@ -1,0 +1,97 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Mini School{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'login' %}{% endif %}">
+            <i class="bi bi-book-half"></i> Mini School
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                {% if user.is_authenticated %}
+                    
+                    {% if user.role == 'EMPLOYEE' %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-people-fill"></i> Manage Users
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'user_list' 'STUDENT' %}"><i class="bi bi-person"></i> Students</a></li>
+                                <li><a class="dropdown-item" href="{% url 'user_list' 'INSTRUCTOR' %}"><i class="bi bi-person-video3"></i> Instructors</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear-fill"></i> System
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'course_list_create' %}"><i class="bi bi-journal-bookmark-fill"></i> Manage Courses</a></li>
+                                <li><a class="dropdown-item" href="{% url 'category_list_create' %}"><i class="bi bi-tags-fill"></i> Manage Categories</a></li>
+                                <li><a class="dropdown-item" href="{% url 'manage_enrollments' %}"><i class="bi bi-person-check-fill"></i> Manage Enrollments</a></li>
+                                <li><a class="dropdown-item" href="{% url 'manage_schedules' %}"><i class="bi bi-calendar-week"></i> Manage Schedules</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'view_reviews' %}"><i class="bi bi-star-half"></i> View Reviews</a></li>
+                            </ul>
+                        </li>
+                    
+                    {# == INSTRUCTOR LINKS == #}
+                    {% elif user.role == 'INSTRUCTOR' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'instructor_dashboard' %}"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'instructor_create_course' %}"><i class="bi bi-plus-circle-fill"></i> Create Course</a></li>
+
+                    {# == STUDENT LINKS == #}
+                    {% elif user.role == 'STUDENT' %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'student_dashboard' %}"><i class="bi bi-speedometer2"></i> My Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'student_course_list' %}"><i class="bi bi-journals"></i> Browse Courses</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'student_my_grades' %}"><i class="bi bi-award-fill"></i> My Grades</a></li>
+                    
+                    {% endif %}
+                {% endif %}
+            </ul>
+
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
+                    <span class="navbar-text text-white me-3">
+                        Welcome, {{ user.username }}
+                    </span>
+                    <form method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-light btn-sm"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                    </form>
+                {% else %}
+                     <a href="{% url 'login' %}" class="btn btn-outline-light"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="container my-5">
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

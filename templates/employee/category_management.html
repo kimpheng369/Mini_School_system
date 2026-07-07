@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Categories - LMS{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-tag-fill"></i> Create New Category</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle-fill"></i> Save Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-tags-fill"></i> Existing Categories</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in categories %}
+                            <tr>
+                                <td><strong>{{ category.name }}</strong></td>
+                                <td>{{ category.description|default:"N/A"|truncatewords:15 }}</td>
+                                <td class="text-center">
+                                    <a href="{% url 'edit_category' category.id %}" class="btn btn-sm btn-outline-primary me-1" title="Edit Category">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a href="{% url 'remove_category' category.id %}" class="btn btn-sm btn-outline-danger" title="Remove Category">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center p-5 text-muted">
+                                    <i class="bi bi-tag-x fs-1"></i>
+                                    <p class="mt-2 mb-0">No course categories have been created yet.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-footer text-muted">
+                Displaying {{ categories.count }} category(s).
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    form p {
+        margin-bottom: 1rem;
+    }
+    form p label {
+        display: block;
+        margin-bottom: .5rem;
+        font-weight: 500;
+    }
+    form p input,
+    form p textarea {
+        width: 100%;
+        padding: .5rem .75rem;
+        font-size: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: .375rem;
+    }
+</style>
+{% endblock %}

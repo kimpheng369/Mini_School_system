@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Course Schedules - LMS{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-calendar-plus"></i> Create New Schedule</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid mt-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle-fill"></i> Add Schedule
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-calendar-week"></i> Current Course Schedules</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Course</th>
+                                <th>Day</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for schedule in schedules %}
+                            <tr>
+                                <td>{{ schedule.course.title }}</td>
+                                <td>{{ schedule.get_day_of_week_display }}</td>
+                                <td>{{ schedule.start_time|time:"g:i A" }}</td>
+                                <td>{{ schedule.end_time|time:"g:i A" }}</td>
+                                <td class="text-center">
+                                    <form method="POST" action="{% url 'remove_schedule' schedule.id %}" onsubmit="return confirm('Are you sure you want to remove this schedule entry?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash3"></i> Remove
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center p-5 text-muted">
+                                    <i class="bi bi-calendar-x fs-1"></i>
+                                    <p class="mt-2 mb-0">No course schedules have been created yet.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+             <div class="card-footer text-muted">
+                Displaying {{ schedules.count }} schedule(s).
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    form p {
+        margin-bottom: 1rem;
+    }
+    form p label {
+        display: block;
+        margin-bottom: .5rem;
+        font-weight: 500;
+    }
+    form p input,
+    form p select {
+        width: 100%;
+        padding: .5rem .75rem;
+        font-size: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: .375rem;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    <div>
+        <h1>{{ course.title }}</h1>
+        <p class="text-muted">Instructor: {{ course.instructor.get_full_name|default:"TBD" }}</p>
+    </div>
+    <a href="{% url 'student_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+<p>{{ course.description }}</p>
+<hr>
+
+<div class="row">
+    <div class="col-md-5">
+        <h3>Course Lessons</h3>
+        <div class="list-group">
+            {% for lesson in lessons %}
+                <a href="#" class="list-group-item list-group-item-action">
+                    Lesson {{ lesson.order }}: {{ lesson.title }}
+                </a>
+            {% empty %}
+                <div class="list-group-item">No lessons have been added yet.</div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-md-7">
+    <h3>Assignments</h3>
+    <div class="list-group">
+        {% for item in assignments_with_submissions %}
+            <div class="list-group-item">
+                <h5>{{ item.assignment.title }}</h5>
+                <p><small class="text-muted">Due: {{ item.assignment.due_date|date:"F j, Y, P" }}</small></p>
+                <p>{{ item.assignment.description|linebreaksbr }}</p>
+                {% if item.submission %}
+                    <div class="alert alert-success">
+                        <p class="mb-1"><strong>Submitted on:</strong> {{ item.submission.submitted_at|date:"F j, Y, P" }}</p>
+                        {% if item.submission.grade is not None %}
+                            <p class="mb-0"><strong>Grade: {{ item.submission.grade }}%</strong></p>
+                        {% else %}
+                            <p class="mb-0"><strong>Grade:</strong> Pending</p>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <a href="{% url 'submit_assignment' item.assignment.id %}" class="btn btn-primary">Submit Assignment</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if not assignments_with_submissions %}
+            <div class="list-group-item">No assignments for this course yet.</div>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+<hr>
+<div class="mt-4 text-center">
+    <h4>Teacher Review</h4>
+    <p>Enjoying the course? Leave a review for your instructor!</p>
+    <a href="{% url 'add_review' course.id %}" class="btn btn-warning">Write a Review</a>
+</div>
+
+{% endblock %}

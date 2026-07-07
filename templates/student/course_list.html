@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Browse All Courses</h1>
+    <p>Here you can find all the courses available for enrollment.</p>
+    <hr>
+
+    <div class="row">
+        {% for course in courses %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ course.title }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Instructor: {{ course.instructor.get_full_name|default:"TBD" }}</h6>
+                    <p class="card-text">{{ course.description|truncatewords:25 }}</p>
+                    
+                    <div class="mt-auto">
+                        {% if course.id in enrolled_course_ids %}
+                            <span class="btn btn-success disabled w-100">Already Enrolled</span>
+                        {% else %}
+                            <a href="{% url 'enroll_course' course.id %}" class="btn btn-primary w-100">Enroll Now</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    Category: {{ course.category.name }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <div class="col">
+                <div class="alert alert-info">No courses are available at the moment. Please check back later.</div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

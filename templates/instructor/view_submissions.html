@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}View Submissions - {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="h2">View Submissions</h1>
+        <p class="lead text-muted mb-0">For: {{ assignment.title }} ({{ assignment.course.title }})</p>
+    </div>
+    <a href="{% url 'instructor_course_detail' assignment.course.id %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Back to Course Management
+    </a>
+</div>
+<hr>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4 class="mb-0"><i class="bi bi-person-lines-fill"></i> Student Submissions</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Student</th>
+                        <th scope="col">Submitted At</th>
+                        <th scope="col">Submitted File</th>
+                        <th scope="col" class="text-center">Grade</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                    <tr>
+                        <td><strong>{{ sub.student.get_full_name|default:sub.student.username }}</strong></td>
+                        <td>{{ sub.submitted_at|date:"M d, Y, g:i A" }}</td>
+                        <td>
+                            <a href="{{ sub.submitted_file.url }}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                <i class="bi bi-download"></i> Download File
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            {% if sub.grade is not None %}
+                                <span class="badge bg-success">{{ sub.grade }}%</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Not Graded</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'grade_submission' sub.id %}" class="btn btn-sm btn-primary">
+                                <i class="bi bi-pencil-fill"></i> Grade / View
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center p-5 text-muted">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2 mb-0">No submissions have been received for this assignment yet.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        Total submissions received: {{ submissions.count }}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<meta http-equiv="refresh" content="3;url={% url 'login' %}">
+<div class="row justify-content-center">
+    <div class="col-md-8 text-center">
+        <h2>You Have Been Logged Out</h2>
+        <p>You will be automatically redirected to the login page shortly.</p>
+        <a href="{% url 'login' %}">Click here if you are not redirected.</a>
+    </div>
+</div>
+{% endblock %}

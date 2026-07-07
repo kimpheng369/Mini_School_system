@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Instructor Dashboard - LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Instructor Dashboard</h1>
+    <a href="{% url 'instructor_create_course' %}" class="btn btn-primary">Create New Course</a>
+</div>
+<p class="lead">Welcome, {{ user.first_name }}. Here is a summary of your activities.</p>
+<hr>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header">
+        <h4><i class="bi bi-calendar-week"></i> My Weekly Schedule</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead class="table-light">
+                    <tr>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Course</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for schedule in schedules %}
+                    <tr>
+                        <td><strong>{{ schedule.get_day_of_week_display }}</strong></td>
+                        <td>{{ schedule.start_time|time:"g:i A" }} - {{ schedule.end_time|time:"g:i A" }}</td>
+                        <td>{{ schedule.course.title }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted p-4">You have no scheduled classes.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-5 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h4><i class="bi bi-card-checklist"></i> Assignments to Grade <span class="badge bg-danger ms-2">{{ submissions_to_grade.count }}</span></h4>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for sub in submissions_to_grade %}
+                    <li class="list-group-item">
+                        <div class="fw-bold">{{ sub.student.get_full_name|default:sub.student.username }}</div>
+                        <div class="text-muted small">
+                            Submitted for: {{ sub.assignment.title }}
+                            <br>
+                            Course: {{ sub.assignment.course.title }}
+                        </div>
+                        <a href="{% url 'grade_submission' sub.id %}" class="btn btn-sm btn-success mt-2">Grade Now</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted text-center p-4">
+                        Great job! No assignments are waiting for a grade.
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card shadow-sm h-100">
+            <div class="card-header">
+                <h4><i class="bi bi-collection-fill"></i> My Courses</h4>
+            </div>
+            <div class="list-group list-group-flush">
+                {% for course in courses %}
+                    <a href="{% url 'instructor_course_detail' course.id %}" class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">{{ course.title }}</h5>
+                            <small class="text-warning">
+                                ★ {{ course.avg_rating|floatformat:1|default:"N/A" }}
+                            </small>
+                        </div>
+                        <p class="mb-2">{{ course.description|truncatewords:20 }}</p>
+                        <div class="d-flex gap-3">
+                            <span class="badge bg-primary">Students: {{ course.student_count }}</span>
+                            <span class="badge bg-secondary">Lessons: {{ course.lesson_count }}</span>
+                            <span class="badge bg-info text-dark">Assignments: {{ course.assignment_count }}</span>
+                        </div>
+                    </a>
+                {% empty %}
+                    <div class="p-3 text-muted text-center">
+                        You have not created or been assigned to any courses yet.
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

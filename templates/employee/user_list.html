@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ role|title }} List - LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">{{ role|title }}s List</h1>
+    <a href="{% url 'create_user' role %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Create New {{ role|title }}
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="card-title mb-0">All {{ role }}s</span>
+            <form class="d-flex" style="max-width: 300px;">
+                <input class="form-control me-2" type="search" placeholder="Search users..." aria-label="Search">
+                <button class="btn btn-outline-secondary" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Username</th>
+                        {% if role == 'student' %}
+                            <th scope="col">Student ID</th>
+                            <th scope="col" class="text-center">Age</th>
+                        {% endif %}
+                        <th scope="col">Email</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td><strong>{{ user.get_full_name|default:user.username }}</strong></td>
+                        <td>{{ user.username }}</td>
+                        {% if role == 'student' %}
+                            <td>{{ user.student_id|default:"N/A" }}</td>
+                            <td class="text-center">{{ user.age|default:"-" }}</td>
+                        {% endif %}
+                        <td>{{ user.email }}</td>
+                        <td class="text-center">
+                            <a href="{% url 'edit_user' user.id %}" class="btn btn-sm btn-outline-primary me-1">
+                                <i class="bi bi-pencil-square"></i> Edit
+                            </a>
+                            <a href="{% url 'remove_user' user.id %}" class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash3"></i> Remove
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if role == 'student' %}6{% else %}4{% endif %}" class="text-center p-4 text-muted">
+                            No {{ role }}s have been created yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        Displaying {{ users.count }} user(s).
+    </div>
+</div>
+{% endblock %}

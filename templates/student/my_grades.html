@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}My Grades - LMS{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <h1 class="h2">My Grades</h1>
+    <p class="lead text-muted">Here are all of your graded assignments and exams.</p>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h4 class="mb-0"><i class="bi bi-award-fill"></i> Graded Work</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Course</th>
+                        <th style="width: 25%;">Assignment / Exam</th>
+                        <th style="width: 10%;" class="text-center">Your Grade</th>
+                        <th style="width: 40%;">Instructor Feedback</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sub in submissions %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'student_course_detail' sub.assignment.course.id %}" class="text-decoration-none">
+                                {{ sub.assignment.course.title }}
+                            </a>
+                        </td>
+                        <td>
+                            <strong>{{ sub.assignment.title }}</strong>
+                            {% if sub.assignment.assignment_type == 'EXAM' %}
+                                <span class="badge bg-danger ms-2">Exam</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <span class="badge fs-6 
+                                {% if sub.grade >= 85 %}bg-success
+                                {% elif sub.grade >= 70 %}bg-primary
+                                {% elif sub.grade >= 50 %}bg-warning text-dark
+                                {% else %}bg-danger
+                                {% endif %}">
+                                {{ sub.grade }}%
+                            </span>
+                        </td>
+                        <td>
+                            <p class="mb-0 fst-italic text-muted">
+                                {{ sub.feedback|default:"No feedback was provided."|linebreaksbr }}
+                            </p>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center p-5 text-muted">
+                            <i class="bi bi-journal-check fs-1"></i>
+                            <p class="mt-2 mb-0">You have no graded assignments yet. Keep up the good work!</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        Displaying {{ submissions.count }} graded item(s).
+    </div>
+</div>
+{% endblock %}

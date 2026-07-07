@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}All Reviews - LMS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h2">All Student Reviews</h1>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <i class="bi bi-star-half"></i> Reviews from across the platform
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Course</th>
+                        <th style="width: 15%;">Instructor</th>
+                        <th style="width: 15%;">Student</th>
+                        <th class="text-center" style="width: 10%;">Rating</th>
+                        <th style="width: 30%;">Comment</th>
+                        <th style="width: 10%;">Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for review in reviews %}
+                    <tr>
+                        <td><strong>{{ review.course.title }}</strong></td>
+                        <td>{{ review.course.instructor.get_full_name|default:review.course.instructor.username }}</td>
+                        <td>{{ review.student.get_full_name|default:review.student.username }}</td>
+                        <td class="text-center">
+                            {% for i in "12345" %}
+                                {% if i|add:0 <= review.rating %}
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-muted"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                        <td>{{ review.comment|truncatewords:20 }}</td>
+                        <td>{{ review.created_at|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center p-5 text-muted">
+                            <i class="bi bi-chat-square-dots fs-1"></i>
+                            <p class="mt-2 mb-0">No reviews have been submitted yet.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        Total reviews found: {{ reviews.count }}
+    </div>
+</div>
+{% endblock %}

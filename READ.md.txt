@@ -1,0 +1,11 @@
+employee :
+username: Pheng
+pass: Admin3301
+
+Instructor: 
+username: teacher01 
+pass: Admin3301
+
+Username: student2
+EthanMorales@gmail.com
+password: student3301

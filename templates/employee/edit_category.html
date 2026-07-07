@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Category - Mini School System{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="bi bi-pencil-square"></i> 
+                    Edit Category: <span class="text-primary">{{ category.name }}</span>
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="{% url 'category_list_create' %}" class="btn btn-secondary me-md-2">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle-fill"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    form p { margin-bottom: 1rem; }
+    form p label { display: block; margin-bottom: .5rem; font-weight: 500; }
+    form p input, form p textarea { width: 100%; padding: .5rem .75rem; border: 1px solid var(--border-color); border-radius: .375rem; }
+</style>
+{% endblock %}

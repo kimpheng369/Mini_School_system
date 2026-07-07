@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.title }} - Management{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1>{{ course.title }}</h1>
+        <p class="text-muted mb-0">Category: {{ course.category.name }}</p>
+    </div>
+    <div>
+        <a href="{% url 'view_student_roster' course.id %}" class="btn btn-info me-2">View Enrolled Students</a>
+
+        <a href="{% url 'instructor_dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+<hr>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Lessons</h4>
+                <a href="{% url 'create_lesson' course.id %}" class="btn btn-sm btn-primary">+ Add Lesson</a>
+            </div>
+
+            <ul class="list-group list-group-flush">
+                {% for lesson in lessons %}
+                    <li class="list-group-item">{{ lesson.order }}. {{ lesson.title }}</li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No lessons have been added yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4>Assignments & Exams</h4>
+                <div>
+                    <a href="{% url 'create_assignment' course.id %}" class="btn btn-sm btn-primary">+ Add Assignment</a>
+                    <a href="{% url 'create_exam' course.id %}" class="btn btn-sm btn-warning">+ Add Exam</a>
+                </div>
+            </div>
+            <ul class="list-group list-group-flush">
+                {% for assignment in assignments %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>
+                            {{ assignment.title }}
+                            {% if assignment.assignment_type == 'EXAM' %}
+                                <span class="badge bg-danger ms-2">Exam</span>
+                            {% endif %}
+                        </span>
+                        <a href="{% url 'view_submissions' assignment.id %}" class="btn btn-sm btn-info">View Submissions</a>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-muted">No assignments or exams have been created yet.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
